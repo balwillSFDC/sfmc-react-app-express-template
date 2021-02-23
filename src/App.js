@@ -1,25 +1,50 @@
 import logo from './logo.svg';
 import './App.css';
+import sfmcHelper from './sfmcHelper'
+import { connect } from 'react-redux'
+import React from 'react'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+const mapStateToProps = state => {
+  return {
+    buttonClicked: state.buttonClicked
+  }
 }
 
-export default App;
+const mapDispatchToProps = dispatch => {
+  return { dispatch }
+}
+
+class App extends React.Component {
+
+
+  constructor() {
+    super()
+    this.buttonClick = this.buttonClick.bind(this)
+  }
+
+  buttonClick() {
+    this.props.dispatch({
+      type: 'BUTTON_CLICKED',
+      payload: {
+        buttonClicked: true 
+      }
+    })
+  }
+
+  render() {
+    return (
+      <div className="App">
+        <header className="App-header">
+          <img src={logo} className="App-logo" alt="logo" />
+          <p>
+            This is a React app to test SFMC APIs 
+          </p>
+          <button onClick={this.buttonClick}>Execute API Request</button> 
+        </header>
+      </div>
+    );
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
