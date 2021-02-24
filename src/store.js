@@ -1,29 +1,20 @@
 import {createStore, applyMiddleware} from 'redux'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import sfmcHelper from './sfmcHelper'
-
+import thunkMiddleware from 'redux-thunk'
+import logger from 'redux-logger'
 
 const initialState = {
   buttonClicked: false
 }
 
-const loggerMiddleware = store => next => action => {
-  console.log('dispatching', action)
-  let result = next(action)
-  console.log('updated state', store.getState())
-
-
-  if (action.type === 'BUTTON_CLICKED') {
-    sfmcHelper.getAllDataExtensions().then(console.log)
-  }
-
-
-  return result
-
+const customMiddleWare = store => next => action => {
+  sfmcHelper.sampleFetch().then()
+  
+  return next(action)
 }
 
-
-const middlewareEnhancer = applyMiddleware(loggerMiddleware)
+const middlewareEnhancer = composeWithDevTools(applyMiddleware(logger, thunkMiddleware))
 
 const reducer = (state = initialState, action) => {
   if (action.type === 'BUTTON_CLICKED') {

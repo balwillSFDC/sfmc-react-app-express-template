@@ -1,9 +1,10 @@
 import logo from './logo.svg';
 import './App.css';
 import sfmcHelper from './sfmcHelper'
+import sfmcClient from './sfmcClient'
 import { connect } from 'react-redux'
 import React from 'react'
-
+import store from './store'
 
 const mapStateToProps = state => {
   return {
@@ -16,8 +17,6 @@ const mapDispatchToProps = dispatch => {
 }
 
 class App extends React.Component {
-
-
   constructor() {
     super()
     this.buttonClick = this.buttonClick.bind(this)
