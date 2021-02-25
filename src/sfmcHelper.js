@@ -6,7 +6,7 @@ const stack = process.env.REACT_APP_SFMC_STACK;
 const origin = process.env.REACT_APP_SFMC_ORIGIN;
 const authOrigin = process.env.REACT_APP_SFMC_AUTHORIGIN;
 const soapOrigin = process.env.REACT_APP_SFMC_SOAPORIGIN;
-const redirectUri = 'https://127.0.0.1:3000'
+const redirectUri = process.env.REACT_APP_REDIRECTURI
 const encodedRedirectUri = encodeURIComponent(redirectUri)
 
 let functions = {
