@@ -1,32 +1,26 @@
 import {createStore, applyMiddleware} from 'redux'
+import { persistStore, persistReducer } from 'redux-persist'
+import storage from 'redux-persist/lib/storage'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import sfmcHelper from './sfmcHelper'
 import thunkMiddleware from 'redux-thunk'
 import logger from 'redux-logger'
+import { customMiddleWare, reducer } from './reducer'
 
-const initialState = {
-  buttonClicked: false
+
+
+
+
+const middlewareEnhancer = composeWithDevTools(applyMiddleware(logger, customMiddleWare, thunkMiddleware))
+
+let persistConfig = {
+  key: 'root',
+  storage: storage
 }
 
-const customMiddleWare = store => next => action => {
-  sfmcHelper.sampleFetch().then()
-  
-  return next(action)
-}
+const persistedReducer = persistReducer(persistConfig, reducer)
 
-const middlewareEnhancer = composeWithDevTools(applyMiddleware(logger, thunkMiddleware))
+let store = createStore(persistedReducer, middlewareEnhancer)
+let persistor = persistStore(store)
 
-const reducer = (state = initialState, action) => {
-  if (action.type === 'BUTTON_CLICKED') {
-    return {
-      ...state,
-      buttonClicked: action.payload.buttonClicked
-    }
-  }
-
-  return state
-}
-
-const store = createStore(reducer, middlewareEnhancer)
-
-export default store;
+export {store, persistor}

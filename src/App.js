@@ -8,7 +8,12 @@ import store from './store'
 
 const mapStateToProps = state => {
   return {
-    buttonClicked: state.buttonClicked
+    buttonClicked: state.buttonClicked,
+    pageLoaded: state.pageLoaded,
+    authCode: state.authCode,
+    accessToken: state.accessToken,
+    refreshToken: state.refreshToken,
+    tokenExpirationSeconds: state.tokenExpirationSeconds,
   }
 }
 
@@ -22,12 +27,27 @@ class App extends React.Component {
     this.buttonClick = this.buttonClick.bind(this)
   }
 
+  componentDidMount() {
+    if (window.location.href.includes('?code=')) {
+      var urlParams = new URLSearchParams(window.location.search)
+
+      this.props.dispatch({
+        type: 'PAGE_LOAD_SUCCESSFUL',
+        payload: {
+          authCode: urlParams.get('code') 
+        }
+      })      
+      // sfmcHelper.getAccessToken(urlParams.get('code'))
+    } else {
+      this.props.dispatch({
+        type: 'PAGE_LOAD_INITIATED'
+      })
+    }
+  }
+
   buttonClick() {
     this.props.dispatch({
-      type: 'BUTTON_CLICKED',
-      payload: {
-        buttonClicked: true 
-      }
+      type: 'BUTTON_CLICKED'
     })
   }
 

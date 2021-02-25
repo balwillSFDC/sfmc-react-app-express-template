@@ -1,4 +1,13 @@
 import sfmcClient from './sfmcClient'
+import {store} from './store'
+const clientId = process.env.REACT_APP_SFMC_CLIENTID;
+const clientSecret = process.env.REACT_APP_SFMC_CLIENTSECRET;
+const stack = process.env.REACT_APP_SFMC_STACK;
+const origin = process.env.REACT_APP_SFMC_ORIGIN;
+const authOrigin = process.env.REACT_APP_SFMC_AUTHORIGIN;
+const soapOrigin = process.env.REACT_APP_SFMC_SOAPORIGIN;
+const redirectUri = 'https://127.0.0.1:3000'
+const encodedRedirectUri = encodeURIComponent(redirectUri)
 
 let functions = {
 
@@ -48,11 +57,42 @@ let functions = {
     return dataExtensionsResult;
   },
 
-  sampleFetch: () => {
-    fetch('https://jsonplaceholder.typicode.com/todos/1')
+  getAuthCode: () => {
+    fetch(`${authOrigin}/v2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodedRedirectUri}`)
+      .then(response => window.location.assign(response.url))
+  },
+
+  getAccessToken: (authCode) => {
+    let body = {
+      grant_type: 'authorization_code',
+      code: authCode,
+      client_id: clientId,
+      client_secret: clientSecret,
+      redirect_uri: redirectUri
+    }
+    
+    fetch(`${authOrigin}/v2/token`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    })
       .then(response => response.json())
-      .then(json => console.log(json))
+      .then(data => {
+        store.dispatch({
+          type: 'ACCESS_TOKEN_RECEIVED',
+          payload: {
+            accessToken: data.access_token,
+            refreshToken: data.refresh_token,
+            tokenExpirationSeconds: data.expires_in
+          }
+        })
+      })
+      
   }
+
+
 }
 
 export default functions

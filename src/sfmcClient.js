@@ -13,8 +13,13 @@ let sfmcClient = new ET_Client(clientId, clientSecret, stack, {
   authOptions: {
     authVersion: 2,
     // accountId: parentBU,
-    applicationType: 'web app',
-  }
+    applicationType: 'server',
+  },
+  // globalReqOptions: {
+  //   headers: {
+  //     'Sec-Fetch-Mode': 'no-cors'
+  //   }
+  // }
 });
 
 export default sfmcClient
