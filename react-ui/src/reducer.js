@@ -1,46 +1,59 @@
-
 const initialState = {
-  buttonClicked: false,
-  pageLoaded: false,
   authCode: '',
+  authCodeLogin: '',
+  retrievingAuthCode: false,
+  authCodeRetrieved: false,
   accessToken: '',
+  retrievingAccessToken: false,
+  accessTokenRetrieved: false,
   refreshToken: '',
   tokenExpirationSeconds: 0,
+  buttonClicked: false,
 }
 
 const customMiddleWare = store => next => action => {
-  
-  switch(action.type) {
-    case 'PAGE_LOAD_INITIATED':
-      fetch('/api')
-        .then(res => res.json())
-        .then(message => console.log(message))
-    // case 'PAGE_LOAD_SUCCESSFUL':
-    //   return sfmcHelper.getAccessToken(action.payload.authCode)
-  }
-  
+  // Custom Middleware
+  // ...
+
   return next(action)
 }
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'PAGE_LOAD_SUCCESSFUL':
+    case 'FETCH_AUTHORIZATION_CODE_REQUEST':
       return {
         ...state,
-        pageLoaded: true
-      };
-    case 'BUTTON_CLICKED':
+        retrievingAuthCode: true
+      }
+    case 'FETCH_AUTHORIZATION_CODE_SUCCESS':
       return {
         ...state,
-        buttonClicked: true
-      };
-    case 'ACCESS_TOKEN_RECEIVED':
+        retrievingAuthCode: false,
+        authCodeRetrieved: true,
+        authCodeLogin: action.payload.authCodeLogin
+      }
+    case 'FETCH_AUTHORIZATION_CODE_FAILURE':
       return {
         ...state,
+        retrievingAuthCode: false,
+        authCodeRetrieved: false,
+        authCode: ''
+      }
+    case 'FETCH_ACCESS_TOKEN_REQUEST':
+      return {
+        ...state,
+        retrievingAccessToken: true
+      }
+    case 'FETCH_ACCESS_TOKEN_SUCCESS':
+      return {
+        ...state,
+        retrievingAccessToken: false,
+        accessTokenRetrieved: true,
         accessToken: action.payload.accessToken,
         refreshToken: action.payload.refreshToken,
-        tokenExpirationSeconds: action.payload.tokenExpirationSeconds
+        tokenExpirationSeconds: action.payload.tokenExpirationSeconds,
       }
+    case 'FETCH_ACCESS_TOKEN_FAILURE':
     default:
       return state;
   }

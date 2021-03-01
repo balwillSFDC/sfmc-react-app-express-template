@@ -3,15 +3,20 @@ import './App.css';
 import { connect } from 'react-redux'
 import React from 'react'
 import store from './store'
+import { fetchAccessToken, fetchAuthCode } from './actions'
 
 const mapStateToProps = state => {
   return {
-    buttonClicked: state.buttonClicked,
-    pageLoaded: state.pageLoaded,
     authCode: state.authCode,
+    authCodeLogin: state.authCodeLogin,
+    retrievingAuthCode: state.retrievingAuthCode,
+    authCodeRetrieved: state.authCodeRetrieved,
     accessToken: state.accessToken,
+    retrievingAccessToken: state.retrievingAccessToken,
+    accessTokenRetrieved: state.accessTokenRetrieved,
     refreshToken: state.refreshToken,
     tokenExpirationSeconds: state.tokenExpirationSeconds,
+    buttonClicked: state.buttonClicked,
   }
 }
 
@@ -26,26 +31,21 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    if (window.location.href.includes('?code=')) {
-      var urlParams = new URLSearchParams(window.location.search)
-
-      this.props.dispatch({
-        type: 'PAGE_LOAD_SUCCESSFUL',
-        payload: {
-          authCode: urlParams.get('code') 
-        }
-      })      
-      // sfmcHelper.getAccessToken(urlParams.get('code'))
-    } else {
-      this.props.dispatch({
-        type: 'PAGE_LOAD_INITIATED'
-      })
+    if (window.location.href.includes('?code=') && !this.props.accessToken) {
+      this.props.dispatch(fetchAccessToken())
+    } else if (this.props.authCodeLogin && !this.props.accessTokenRetrieved) {
+      window.location.assign(this.props.authCodeLogin)
+    } else if (!this.props.authCodeLogin && !this.props.authCode) {
+      this.props.dispatch(fetchAuthCode())
     }
   }
 
   buttonClick() {
     this.props.dispatch({
-      type: 'BUTTON_CLICKED'
+      type: 'BUTTON_CLICKED',
+      payload: {
+        authCode: this.props.authCode
+      }
     })
   }
 

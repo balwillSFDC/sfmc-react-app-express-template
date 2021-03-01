@@ -2,11 +2,11 @@ import {createStore, applyMiddleware} from 'redux'
 import { persistStore, persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 import { composeWithDevTools } from 'redux-devtools-extension'
-import thunkMiddleware from 'redux-thunk'
+import thunk from 'redux-thunk'
 import logger from 'redux-logger'
 import { customMiddleWare, reducer } from './reducer'
 
-const middlewareEnhancer = composeWithDevTools(applyMiddleware(logger, customMiddleWare, thunkMiddleware))
+const middlewareEnhancer = composeWithDevTools(applyMiddleware(logger, customMiddleWare, thunk))
 
 let persistConfig = {
   key: 'root',
