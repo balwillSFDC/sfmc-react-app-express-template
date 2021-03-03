@@ -39,7 +39,10 @@ if (!isDev && cluster.isMaster) {
   // Priority serve any static files
   app.use(express.static(path.resolve(__dirname, '../react-ui/build')))
 
-  // Answer API requests
+  // =======================================================
+  // ROUTES
+  // =======================================================
+  
   // Get Auth Code
   app.get('/api/authcode', (req, res) => {    
     axios({
@@ -78,12 +81,12 @@ if (!isDev && cluster.isMaster) {
       .catch(error => console.log(error.response))
   })
 
-
   // All remaining requests return the React app, so it can handle routing
   app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, '../react-ui/build', 'index.html'))
   })
 
+  // Creates Server using 'HTTPS' protocol
   https.createServer({
     key: readFileSync('server.key'),
     cert: readFileSync('server.cert')

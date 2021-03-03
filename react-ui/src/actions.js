@@ -1,6 +1,5 @@
 import axios from 'axios'
 
-
 // returns the url that will redirect the user to the login screen with auth code attached
 export const fetchAuthCode = () => {
   return async (dispatch, getState) => {

@@ -6,40 +6,34 @@ const authOrigin = process.env.REACT_APP_SFMC_AUTHORIGIN;
 const soapOrigin = process.env.REACT_APP_SFMC_SOAPORIGIN;
 const redirectUri = process.env.REACT_APP_REDIRECTURI
 const encodedRedirectUri = encodeURIComponent(redirectUri)
-const ET_Client = require('sfmc-fuelsdk-node')
+var FuelSoap = require('fuel-soap');
 const axios = require('axios')
 
-let functions = {
+let accessToken = ""
 
-  getAccessToken: (authCode) => {
-    let body = {
-      grant_type: 'authorization_code',
-      code: authCode,
-      client_id: clientId,
-      client_secret: clientSecret,
-      redirect_uri: redirectUri
-    }
-    
-    fetch(`${authOrigin}/v2/token`, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json'
-      },
-      body: JSON.stringify(body)
-    })
-      .then(response => response.json())
-      .then(data => {
-        store.dispatch({
-          type: 'ACCESS_TOKEN_RECEIVED',
-          payload: {
-            accessToken: data.access_token,
-            refreshToken: data.refresh_token,
-            tokenExpirationSeconds: data.expires_in
-          }
-        })
-      })
-      
+var options = {
+  auth: {
+    accessToken
+    , authUrl: `${authOrigin}/v2/token`
+    , clientId
+    , clientSecret
   }
-}
+  , soapEndpoint: `${soapOrigin}/Service.asmx`
+};
 
-module.exports = { functions }
+var SoapClient = new FuelSoap(options);
+
+// Function that lets you see what properties are retrievable from API 
+// SoapClient.describe('DataExtension', (err, response) => {
+//     let properties = response.body.ObjectDefinition.Properties
+//     let propertyArray = [];
+//     properties.forEach(property => {
+//         if (property.IsRetrievable == 'true') {
+//             propertyArray.push(property.Name)
+//         }
+//     })
+
+//     console.log(propertyArray)
+// })
+
+
